@@ -7,7 +7,7 @@ router.post('/login', async ctx => {
   const { userName, passWord } = ctx.request.body
   const User = mongoose.model('User')
   try {
-    const res = await User.findOne({userName}).exec()
+    const res = await User.findOne({ userName }).exec()
     if (res) {
       try {
         const newUser = new User()
@@ -48,24 +48,29 @@ router.post('/login', async ctx => {
 })
 
 router.post('/register', async ctx => {
-  //取得Model
+  const { userName } = ctx.request.body
   const User = mongoose.model('User')
-  //把从前端接收的POST数据封装成一个新的user对象
-  const newUser = new User(ctx.request.body)
-  //用mongoose的save方法直接存储，然后判断是否成功，返回相应的结果
-  try {
-    const res = await newUser.save()
-    //成功返回code=200，并返回成功信息
-    res && (ctx.body={
-      code: 200,
-      message: '注册成功,快去登录吧!'
-    })
-  } catch (e) {
-    ctx.body={
-      code: 500,
-      message: '出现错误稍后重试!'
+  const res = await User.findOne({ userName }).exec()
+  if (!res) {
+    const newUser = new User(ctx.request.body)
+    try {
+      const res = await newUser.save()
+      res && (ctx.body = {
+        code: 200,
+        message: '注册成功,快去登录吧!'
+      })
+    } catch (e) {
+      ctx.body = {
+        code: 500,
+        message: '出现错误稍后重试!'
+      }
+      console.log(e)
     }
-    console.log(e)
+  } else {
+    ctx.body = {
+      code: 555,
+      message: '用户名已被注册，快换个名字吧!'
+    }
   }
 })
 

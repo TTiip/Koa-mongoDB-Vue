@@ -27,32 +27,41 @@
 </template>
 
 <script>
-  export default {
-    data () {
-      return {
-        account: '',
-        password: ''
-      }
-    },
-    methods: {
-      registerTodo () {
+export default {
+  data () {
+    return {
+      account: '',
+      password: ''
+    }
+  },
+  methods: {
+    registerTodo () {
+      if (this.account.trim() && this.password.trim()) {
         this.$http({
           url: 'http://localhost:3001/user/register',
           method: 'post',
           data: {
-            userName: this.account,
-            passWord: this.password
+            userName: this.account.trim(),
+            passWord: this.password.trim()
           }
         }).then(res => {
           this.$message({
             type: 'success',
             message: res.data.message
           })
-          this.$router.push('/Login')
+          res.data.code !== 555
+            ? this.$router.push('/Login')
+            : this.$router.push('/Register')
+        })
+      } else {
+        this.$message({
+          type: 'error',
+          message: '用户名或密码不能为空'
         })
       }
     }
-  };
+  }
+}
 </script>
 
 <style lang="stylus" scoped>

@@ -28,43 +28,43 @@
 </template>
 
 <script>
-  export default {
-    data() {
-      return {
-        account: '',
-        password: ''
-      };
-    },
-    methods: {
-      toRegisterToDo () {
-        this.$router.push('/Register')
-      },
-      loginToDo() {
-        this.$http({
-          url: 'http://localhost:3001/user/login',
-          method: 'post',
-          data: {
-            userName: this.account,
-            passWord: this.password
-          }
-        }).then(res => {
-          if (res.data.code === 200) {
-            localStorage.jwt = res.data.token
-            this.$message({
-              type: 'success',
-              message: res.data.message
-            })
-            this.$router.push('/TodoList')
-          } else {
-            this.$message({
-              type: 'error',
-              message: res.data.message
-            })
-          }
-        })
-      }
+export default {
+  data () {
+    return {
+      account: '',
+      password: ''
     }
-  };
+  },
+  methods: {
+    toRegisterToDo () {
+      this.$router.push('/Register')
+    },
+    loginToDo () {
+      this.$http({
+        url: 'http://localhost:3001/user/login',
+        method: 'post',
+        data: {
+          userName: this.account,
+          passWord: this.password
+        }
+      }).then(res => {
+        if (res.data.code === 200) {
+          localStorage.jwt = res.data.token
+          this.$message({
+            type: 'success',
+            message: res.data.message
+          })
+          this.$router.push('/TodoList')
+        } else {
+          this.$message({
+            type: 'error',
+            message: res.data.message
+          })
+        }
+      })
+    }
+  }
+}
 </script>
 
 <style lang="stylus" scoped>

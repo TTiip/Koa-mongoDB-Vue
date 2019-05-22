@@ -13,12 +13,18 @@ axiosInstance.interceptors.request.use(config => {
 })
 
 axiosInstance.interceptors.response.use(res => {
-  if (res.data.code === 401) {
+  if (res.data.code !== 200) {
     Message.error(res.data.message)
-    localStorage.clear('jwt')
-    router.replace({
-      path: '/login'
-    })
+    if (res.data.code !== 555) {
+      router.replace({
+        path: '/register'
+      })
+    } else {
+      localStorage.clear('jwt')
+      router.replace({
+        path: '/login'
+      })
+    }
   }
   return res
 }, err => {

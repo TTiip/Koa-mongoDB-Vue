@@ -13,7 +13,7 @@ Vue.config.productionTip = false
 
 router.beforeEach((to, from, next) => {
   const token = localStorage.getItem('jwt')
-  if (to.path === '/login' || to.path === '/Login') {
+  if (to.path.toLowerCase() === '/login') {
     if (token !== 'null' && token !== null) {
       next({
         path: '/TodoList'
@@ -24,7 +24,7 @@ router.beforeEach((to, from, next) => {
   } else {
     if (token !== 'null' && token !== null) {
       next()
-    } else if (to.path === '/register' || to.path === '/Register') {
+    } else if (to.path.toLowerCase() === '/register') {
       next()
     } else {
       next({
@@ -39,6 +39,6 @@ Vue.prototype.$http = axios
 new Vue({
   el: '#app',
   router,
-  components: {App},
+  components: { App },
   template: '<App/>'
 })

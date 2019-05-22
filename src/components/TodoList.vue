@@ -102,7 +102,6 @@ export default {
         }
       })
         .then(res => {
-          console.log(res)
           this.list.push(res.data.data)
           this.todos = ''
         })

@@ -1,4 +1,4 @@
-const  mongoose = require('mongoose')
+const mongoose = require('mongoose')
 const bcrypt = require('bcryptjs') // 加盐加密库
 const { constConfig } = require('../../common')
 const Shcema = mongoose.Schema
@@ -45,14 +45,12 @@ userSchema.pre('save', function (next) { // 每次保存都经过加盐加密，
   })
 })
 
-userSchema.methods = {
-  comparePassWord: (_passWord, passWord) => {
-    return new Promise((r, j) => {
-      bcrypt.compare(_passWord, passWord, (err, isMatch) => {
-        !err ? r(isMatch) : j(isMatch)
-      })
+userSchema.methods = { // 校验加密以后的密码
+  comparePassWord: (_passWord, passWord) => new Promise((resolve, reject) => {
+    bcrypt.compare(_passWord, passWord, (err, isMatch) => {
+      !err ? resolve(isMatch) : reject(isMatch)
     })
-  }
+  })
 }
 
 mongoose.model('User', userSchema)

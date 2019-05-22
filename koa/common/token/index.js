@@ -8,30 +8,21 @@ const creatToken = (userName, passWord) => (jwt.sign({
   expiresIn: constConfig.TIMEOUT
 }))
 
-const checkToken = ctx => {
-  const authToken = ctx.header.authorization
-  if (!authToken) {
-    ctx.body = {
-      message: 'token过期或不存在!'
+const checkToken = ctx => new Promise(resolve => {
+  jwt.verify(ctx.header.authorization, constConfig.SECRET, (err, decoded) => {
+    if (!err) {
+      resolve({
+        ...decoded,
+        timeOut: false
+      })
+    } else {
+      resolve({
+        timeOut: true,
+        msg: '登录状态过期, 请重新登录!'
+      })
     }
-    return
-  }
-  return new Promise(resolve => {
-    jwt.verify(authToken, constConfig.SECRET, (err, decoded) => {
-      if (!err) {
-        resolve({
-          ...decoded,
-          timeOut: false
-        })
-      } else {
-        resolve({
-          timeOut: true,
-          msg: '登录状态过期, 请重新登录!'
-        })
-      }
-    })
   })
-}
+})
 
 module.exports = {
   creatToken,

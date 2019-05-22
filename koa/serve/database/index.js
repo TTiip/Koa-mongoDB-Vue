@@ -17,7 +17,6 @@ const connect = () => {
         reject()
         console.log(constConfig.ERR('数据库出现问题，程序无法搞定，请人为修理......'))
       }
-
     })
 
     mongoose.connection.on('error', err => {
@@ -29,9 +28,8 @@ const connect = () => {
         reject(err)
         console.log(constConfig.ERR('数据库出现问题，程序无法搞定，请人为修理......'))
       }
-
     })
-    //链接打开的时
+
     mongoose.connection.once('open', () => {
       console.log(constConfig.SUCC('MongoDB connected successfully'))
       resolve()

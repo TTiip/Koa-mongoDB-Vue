@@ -6,21 +6,31 @@
        欢迎登录
       </span>
         <el-row>
-          <el-input
-            :autofocus='true'
-            v-model="account"
-            placeholder="账号"
-            type="text">
-          </el-input>
-          <el-input
-            v-model="password"
-            placeholder="密码"
-            type="password"
-            @keyup.enter.native="loginToDo">
-          </el-input>
+          <el-form :model="loginObj" ref="login" class="demo-ruleForm">
+            <el-form-item
+              prop="account"
+              :rules='rules.account'>
+              <el-input
+                ref="loginFocus"
+                v-model="loginObj.account"
+                placeholder="账号"
+                type="text">
+              </el-input>
+            </el-form-item>
+            <el-form-item
+              prop="password"
+              :rules='rules.password'>
+              <el-input
+                v-model="loginObj.password"
+                placeholder="密码"
+                type="password"
+                @keyup.enter.native="loginToDo('login')">
+              </el-input>
+            </el-form-item>
+          </el-form>
           <!-- 增加一个click方法 loginToDo -->
           <el-button type="primary" @click="toRegisterToDo">注册</el-button>
-          <el-button type="primary" @click="loginToDo">登录</el-button>
+          <el-button type="primary" @click="loginToDo('login')">登录</el-button>
         </el-row>
       </el-col>
     </el-row>
@@ -28,38 +38,52 @@
 </template>
 
 <script>
+import { rules } from '../common'
 export default {
   data () {
     return {
-      account: '',
-      password: ''
+      loginObj: {
+        account: '',
+        password: ''
+      },
+      rules
     }
+  },
+  mounted () {
+    this.$refs['loginFocus'].focus()
   },
   methods: {
     toRegisterToDo () {
       this.$router.push('/Register')
     },
-    loginToDo () {
-      this.$http({
-        url: 'http://localhost:3001/user/login',
-        method: 'post',
-        data: {
-          userName: this.account,
-          passWord: this.password
-        }
-      }).then(res => {
-        if (res.data.code === 200) {
-          localStorage.jwt = res.data.token
-          this.$message({
-            type: 'success',
-            message: res.data.message
+    loginToDo (formName) {
+      this.$refs[formName].validate(valid => {
+        if (valid) {
+          this.$http({
+            url: 'http://localhost:3001/user/login',
+            method: 'post',
+            data: {
+              userName: this.loginObj.account,
+              passWord: this.loginObj.password
+            }
+          }).then(res => {
+            if (res.data.code === 200) {
+              localStorage.jwt = res.data.token
+              this.$message({
+                type: 'success',
+                message: res.data.message
+              })
+              this.$router.push('/TodoList')
+            } else {
+              this.$message({
+                type: 'error',
+                message: res.data.message
+              })
+            }
           })
-          this.$router.push('/TodoList')
         } else {
-          this.$message({
-            type: 'error',
-            message: res.data.message
-          })
+          console.log('error submit!!')
+          return false
         }
       })
     }
@@ -73,9 +97,6 @@ export default {
 
   .title
     font-size 28px
-
-  .el-input
-    margin 12px 0
 
   .el-button
     width 100%

@@ -35,7 +35,7 @@ router.post('/login', async ctx => {
     } else {
       ctx.body = {
         code: 201,
-        message: '用户名未找到，请核对用户名或稍后再试!'
+        message: '用户名未找到，请核对用户名或先注册!'
       }
     }
   } catch (err) {
